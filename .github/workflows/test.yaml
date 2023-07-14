@@ -1,0 +1,22 @@
+name: generate atlantis SLI
+
+on:
+  schedule:
+    - cron: '*/5 * * * *'
+
+permissions:
+  pull-requests: write
+
+jobs:
+  generate_atlantis_sli:
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      PR_URL: https://github.com/terakoya76/test/pull/3
+    steps:
+      - name: trigger atlantis plan
+        run: |
+          cat << EOF > comments
+            atlantis plan
+          EOF
+          gh pr comment -F ./comments ${PR_URL}
