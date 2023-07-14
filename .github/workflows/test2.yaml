@@ -1,0 +1,28 @@
+name: release lock
+
+on:
+  issue_comment:
+    types:
+      - created
+
+permissions:
+  pull-requests: write
+
+jobs:
+  release_lock:
+    if: |
+      github.event.issue.pull_request
+      && (github.actor == 'terakoya76')
+      && (github.event.issue.number == 3)
+      && contains(github.event.comment.body, 'Terraform will perform the following actions')
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      PR_URL: https://github.com/terakoya76/test/pull/3
+    steps:
+      - name: release lock
+        run: |
+          cat << EOF > comments
+            atlantis unlock
+          EOF
+          gh pr comment -F ./comments ${PR_URL}
